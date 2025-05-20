@@ -1,0 +1,29 @@
+# Placeholder for config.yaml
+# EchoTrader Configuration
+
+markets:
+  saudi: true
+  us: true
+
+saudi_data_sources:
+  - Tadawul
+  - Argaam
+use_multiple_sources: true
+
+risk_management:
+  max_position_size: 0.05         # 5% of portfolio
+  stop_loss_percent: 2.0
+  take_profit_percent: 5.0
+
+notifications:
+  enable_telegram: true
+  enable_sms: false
+  enable_desktop_popup: true
+
+us_trading:
+  ibkr:
+    enabled: true
+    paper_trading: true
+    client_id: 1
+    host: 127.0.0.1
+    port: 7497
