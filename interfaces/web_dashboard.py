@@ -11,7 +11,7 @@ from signals.rsi_strategy import generate_rsi_signal  # New RSI strategy
 st.set_page_config(page_title="EchoTrader Signal Dashboard", layout="centered")
 
 # Title
-st.title("📡 EchoTrader Signal Dashboard")
+st.title("📡 EchoTrader Signal Dashboard Live")
 
 # Strategy selection
 strategy = st.selectbox("Select Strategy", ["MA Crossover", "RSI Strategy"])
