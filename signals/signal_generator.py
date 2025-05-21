@@ -3,32 +3,38 @@ import pandas as pd
 
 def generate_signal_from_data(data):
     """
-    Generate signal based on Moving Average crossover.
+    Generate signal based on MA crossover (bulletproof version).
     """
     if "Close" not in data.columns or len(data) < 21:
         return "HOLD"
 
-    close_prices = data["Close"]
+    close_prices = data["Close"].copy()
 
+    # Calculate moving averages
     short_ma = close_prices.rolling(window=5).mean()
     long_ma = close_prices.rolling(window=20).mean()
 
-    # Check if the last two values exist and are valid
-    try:
-        latest_short = short_ma.iloc[-1]
-        prev_short = short_ma.iloc[-2]
-        latest_long = long_ma.iloc[-1]
-        prev_long = long_ma.iloc[-2]
-    except IndexError:
+    # Make sure the last 2 values are valid
+    if (
+        pd.isna(short_ma.iloc[-1]) or pd.isna(short_ma.iloc[-2])
+        or pd.isna(long_ma.iloc[-1]) or pd.isna(long_ma.iloc[-2])
+    ):
         return "HOLD"
 
-    if pd.notna(latest_short) and pd.notna(prev_short) and pd.notna(latest_long) and pd.notna(prev_long):
-        if latest_short > latest_long and prev_short <= prev_long:
-            return "BUY"
-        elif latest_short < latest_long and prev_short >= prev_long:
-            return "SELL"
+    # Extract last two values
+    latest_short = short_ma.iloc[-1]
+    prev_short = short_ma.iloc[-2]
+    latest_long = long_ma.iloc[-1]
+    prev_long = long_ma.iloc[-2]
+
+    # Compare the MAs for signal
+    if latest_short > latest_long and prev_short <= prev_long:
+        return "BUY"
+    elif latest_short < latest_long and prev_short >= prev_long:
+        return "SELL"
 
     return "HOLD"
+
 
 
 
