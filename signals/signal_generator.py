@@ -3,25 +3,33 @@ import pandas as pd
 
 def generate_signal_from_data(data):
     """
-    Generate signal based on MA crossover.
+    Generate signal based on Moving Average crossover.
     """
+    if "Close" not in data.columns or len(data) < 21:
+        return "HOLD"
+
     close_prices = data["Close"]
 
     short_ma = close_prices.rolling(window=5).mean()
     long_ma = close_prices.rolling(window=20).mean()
 
-    # Ensure enough data
-    if short_ma.isna().sum() > 2 or long_ma.isna().sum() > 2:
+    # Check if the last two values exist and are valid
+    try:
+        latest_short = short_ma.iloc[-1]
+        prev_short = short_ma.iloc[-2]
+        latest_long = long_ma.iloc[-1]
+        prev_long = long_ma.iloc[-2]
+    except IndexError:
         return "HOLD"
 
-    # Avoid invalid comparisons with NaN
-    if pd.notna(short_ma.iloc[-1]) and pd.notna(long_ma.iloc[-1]) and pd.notna(short_ma.iloc[-2]) and pd.notna(long_ma.iloc[-2]):
-        if short_ma.iloc[-1] > long_ma.iloc[-1] and short_ma.iloc[-2] <= long_ma.iloc[-2]:
+    if pd.notna(latest_short) and pd.notna(prev_short) and pd.notna(latest_long) and pd.notna(prev_long):
+        if latest_short > latest_long and prev_short <= prev_long:
             return "BUY"
-        elif short_ma.iloc[-1] < long_ma.iloc[-1] and short_ma.iloc[-2] >= long_ma.iloc[-2]:
+        elif latest_short < latest_long and prev_short >= prev_long:
             return "SELL"
 
     return "HOLD"
+
 
 
 
