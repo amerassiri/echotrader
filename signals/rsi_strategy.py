@@ -1,10 +1,15 @@
 import pandas as pd
 
 def generate_rsi_signal(data, window=14):
-    close_prices = data["Close"].copy()
+    close_prices = data["Close"]
 
+    # Handle case if Close is a DataFrame (e.g., from yfinance with multi-column)
+    if isinstance(close_prices, pd.DataFrame):
+        close_prices = close_prices.iloc[:, 0]  # take first column
+
+    # Not enough data
     if len(close_prices) < window + 1:
-        return "HOLD"  # Not enough data for RSI calculation
+        return "HOLD"
 
     # Calculate RSI
     delta = close_prices.diff()
@@ -13,14 +18,19 @@ def generate_rsi_signal(data, window=14):
     rs = gain / loss
     rsi = 100 - (100 / (1 + rs))
 
-    # Ensure last RSI value exists
-    if pd.isna(rsi.iloc[-1]).item():
+    # Drop any NaNs
+    rsi = rsi.dropna()
+
+    # Final check
+    if rsi.empty:
         return "HOLD"
 
-    # Signal logic
-    if rsi.iloc[-1] < 30:
+    last_rsi = rsi.iloc[-1]
+
+    if last_rsi < 30:
         return "BUY"
-    elif rsi.iloc[-1] > 70:
+    elif last_rsi > 70:
         return "SELL"
     else:
         return "HOLD"
+
