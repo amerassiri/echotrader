@@ -1,16 +1,17 @@
 import pandas as pd
-import pandas_ta as ta
 
-def generate_rsi_signal(data, lower=30, upper=70):
-    if data is None or "Close" not in data.columns or data.empty:
-        return "HOLD"
+def generate_rsi_signal(data, period=14):
+    close = data["Close"]
+    delta = close.diff()
 
-    rsi = ta.rsi(data["Close"])
-    if rsi.isna().sum() > 0:
-        return "HOLD"
+    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+    rs = gain / loss
+    rsi = 100 - (100 / (1 + rs))
 
-    if rsi.iloc[-1] < lower:
+    if rsi.iloc[-1] < 30:
         return "BUY"
-    elif rsi.iloc[-1] > upper:
+    elif rsi.iloc[-1] > 70:
         return "SELL"
-    return "HOLD"
+    else:
+        return "HOLD"
