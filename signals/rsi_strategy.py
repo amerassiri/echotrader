@@ -14,7 +14,7 @@ def generate_rsi_signal(data, window=14):
     rsi = 100 - (100 / (1 + rs))
 
     # Ensure last RSI value exists
-    if pd.isna(rsi.iloc[-1]):
+    if pd.isna(rsi.iloc[-1]).item():
         return "HOLD"
 
     # Signal logic
