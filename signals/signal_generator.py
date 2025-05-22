@@ -1,5 +1,8 @@
 # Placeholder for signal_generator.py 
-import pandas as pd
+
+st.subheader("🔍 Data Preview")
+st.write(data)
+st.write("Data type:", type(data))
 
 def generate_signal_from_data(data):
     """

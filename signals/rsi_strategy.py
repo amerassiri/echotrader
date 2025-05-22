@@ -1,4 +1,3 @@
-import pandas as pd
 
 def generate_rsi_signal(data, window=14):
     close_prices = data["Close"]
