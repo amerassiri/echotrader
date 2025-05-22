@@ -1,4 +1,5 @@
 # Placeholder for signal_generator.py 
+import streamlit as st
 
 st.subheader("🔍 Data Preview")
 st.write(data)
